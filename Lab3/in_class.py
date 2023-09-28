@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
+
 def scrape_page(url, max_page_num=None, page_num=1, url_set=set()):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -20,6 +21,7 @@ def scrape_page(url, max_page_num=None, page_num=1, url_set=set()):
         return scrape_page(next_page_url, max_page_num, page_num + 1, url_set)
     else:
         return url_set
+
 
 result = scrape_page("https://999.md/ro/list/audio-video-photo/microphones")
 
