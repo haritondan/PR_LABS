@@ -92,4 +92,5 @@ while True:
         }
         client_socket.send(json.dumps(message_json).encode('utf-8'))
 
+
 client_socket.close()

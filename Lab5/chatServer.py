@@ -127,6 +127,7 @@ def handle_client(client_socket, client_address):
     client_socket.close()
 
 
+
 while True:
     client_socket, client_address = server_socket.accept()
     client_thread = threading.Thread(target=handle_client, args=(client_socket, client_address))
