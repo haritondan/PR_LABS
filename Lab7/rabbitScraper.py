@@ -12,7 +12,9 @@ counter = threading.Lock()
 url_count = 0
 processed_count = 0
 
-def extract_product_details(url):
+db_lock = threading.Lock()
+
+def extract(url):
     try:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -36,16 +38,16 @@ def callback(ch, method, properties, body):
     print(f"Consuming URL: {body.decode()}")
     global url_count, processed_count
     url = body.decode()
-    result_json = extract_product_details(url)
+    result_json = extract(url)
     print(result_json)
 
     if isinstance(result_json, str):
         result_dict = json.loads(result_json)
     else:
         result_dict = result_json
-
+    db_lock.acquire()
     db.insert(result_dict)
-
+    db_lock.release()
     with counter:
         processed_count += 1
 
@@ -112,6 +114,6 @@ if __name__ == "__main__":
     scrape_page("https://999.md/ro/list/audio-video-photo/microphones")
 
     # Start multiple consumer threads
-    for i in range(5):  # Change this number to adjust the number of threads
+    for i in range(20):  # Change this number to adjust the number of threads
         consumer_thread = threading.Thread(target=consume_urls, args=(i,))
         consumer_thread.start()
